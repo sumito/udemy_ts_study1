@@ -38,12 +38,19 @@ interface ElevatedEmployee extends Admin,Employee {};
 //type guards:型ガード
 
 
+function addCombine( a: number,b: number): number; //function overload
+function addCombine( a: string,b: string): string; //function overload
+function addCombine( a: number,b: string): string; //function overload
+function addCombine( a: string,b: number): string; //function overload
 function addCombine( a: Combinable,b:Combinable ){
   if( typeof a === 'string' || typeof b === 'string' ){
     return a.toString() + b.toString();
   }
   return a + b;
 }
+
+
+
 
 type UnknownEmployee = Employee | Admin;
 
@@ -127,21 +134,30 @@ moveAnimal({type: 'horse',runningSpeed:20});
 
 //const paragraph = document.querySelector('p');
 //const userInputElement = <HTMLInputElement>document.getElementById('user-input');
-//const userInputElement = <HTMLInputElement>document.getElementById('user-input');
 const userInputElement = document.getElementById('user-input');
 if( userInputElement ){
   //userInputElement.value = 'こんにちは';
   ((userInputElement) as HTMLInputElement).value = 'こんにちは';
 }
 
+
 //index type
 
+interface ErrorContainer {
+  [prop: string]:string;
+}
 
+const errorBag: ErrorContainer = {
+    email: '正しいメールアドレスではありません。',
+}
 
-//funciton overload
+//null 合体演算子
 
+const userInput = '';
 
+const StoredData = userInput ?? 'DEFAULT';
 
+console.log( StoredData );
 
 
 
