@@ -1,115 +1,98 @@
-//generics
 
-/*
-const names: Array<string> = [];
-
-
-const promise = new Promise<any>( (resoleve,reject) => {
-  setTimeout( () => {
-    resoleve(10);
-  },2000
-  );
-
-});
-promise.then( data => {
-  data.Split(' ');
-});
-*/
-/*
-function merge<T extends {},U>( objA: T,objB: U ){
-  return Object.assign(objA,objB);
-}
-
-
-const mergeObj = merge( {name:'Max'},{age:30} );
-console.log(mergeObj.age);
-*/
-
-
-interface Lengthy{
-  length:number;
-}
-
-function countAndDescribe<T extends Lengthy>( element: T ){
-  let descriptionText = '値がありません。';
-  if( element.length > 0 ){
-    descriptionText = '値は' + element.length + '個です';
+//decorator
+function Logger(logString: string){
+  console.log("LOGGER ファクトリ");
+  return function( constructor: Function){
+    console.log(logString);
+    console.log(constructor);  
   }
-  return [element,descriptionText];
 }
 
-console.log(countAndDescribe('お疲れ様です！'));
-
-
-function extractAndConvert<T extends object,U extends keyof T>( obj: T,key: U ){
-  return 'Value: ' + obj[key];
-}
-
-console.log(extractAndConvert({name:'Max'},"name"));
-
-
-//generics class
-class DataStorage<T> {
-  private data: T[] = [];
-
-  addItem(item: T){
-    this.data.push(item);
-  }
-
-  removeItem(item: T){
-    if( this.data.indexOf(item) === -1 ){
-      return;
+function WithTemplate( template: string,hookId: string ){
+  console.log("TEMPLATE ファクトリ");  
+  return function( constructor: any ){
+    console.log("テンプレート表示");
+    const hookEl = document.getElementById(hookId);
+    const p = new constructor();
+    if( hookEl ){
+      hookEl.innerHTML = template;
+      hookEl.querySelector('h1')!.textContent = p.name;
     }
-    this.data.splice(this.data.indexOf(item),1);
-  }
-
-  getItems(){
-    return [...this.data];
   }
 }
 
-const textStorage = new DataStorage<string>();
-textStorage.addItem("Data1");
-textStorage.addItem("Data2");
-textStorage.removeItem("Data2");
-console.log(textStorage.getItems());
 
-const numberStorage = new DataStorage<number>();
-numberStorage.addItem(10);
-numberStorage.addItem(20);
-numberStorage.removeItem(10);
-console.log(numberStorage.getItems());
+@Logger("ログ出力中...")
+@WithTemplate("<h1>Personオブジェクト</h1","app")
+class Person {
+  name = 'Max';
 
+  constructor(){
+    console.log("Personオブジェクト作成中...");
+  }
+}
 
+const pers = new Person();
 
-//const objStorage = new DataStorage<object>();
-//const obj1 = {  name: 'Max'};
-//const obj2 = {  name: 'Manu'};
-//objStorage.addItem(obj1);
-//objStorage.addItem(obj2);
-//objStorage.removeItem(obj1);
-//console.log(objStorage.getItems());
+console.log(pers);
 
-//geneircs utility
+//
 
+class Product {
+  @Log
+  title: string;
+  private _price: number;
 
-interface CourseGoal {
-  title:string;
-  description: string;
-  completeUntil: Date;
+  @Log2
+  set price( val:number ){
+    if( val > 0 ){
+      this._price = val;
+    }else{
+      throw new Error('不正な価格です。0以下は設定できません。');
+    }
+  }
+
+  constructor( title:string,price:number ){
+    this.title = title;
+    this._price = price;
+  }
+
+  @Log3
+  getPriceWithTax( @Log4 tax:number ){
+    return this._price  * ( 1 + tax);
+  }
 }
 
 
-function createCoureseGoal( title:string,description:string,date:Date ) : CourseGoal{
-  let courseGoal: Partial<CourseGoal> = {};
-  courseGoal.title = title;
-  courseGoal.description = description;
-  courseGoal.completeUntil = date;
-  return courseGoal as CourseGoal;
+function Log( target: any, propertyName: string | Symbol ){
+  console.log("Property デコレータ");
+  console.log(target,propertyName);
+}
+function Log2( target: any, name: string,descriptor: PropertyDescriptor ){
+  console.log("Accessor デコレータ");
+  console.log(target);
+  console.log(name);
+  console.log(descriptor);
+  
 }
 
-const names : Readonly<string[]> = ['Max','ANna'];
-//names.push('Manu');
+function Log3( target: any, name: string | Symbol , descriptor: PropertyDescriptor ){
+  console.log("Method デコレータ");
+  console.log(target);
+  console.log(name);
+  console.log(descriptor);
+  
+}
 
+function Log4( target: any, name: string , position: number ){
+  console.log("Parameter デコレータ");
+  console.log(target);
+  console.log(name);
+  console.log(position);
+  
+}
+
+const p1 = new Product('Book',1999);
+const p2 = new Product('Book',2999);
 
 

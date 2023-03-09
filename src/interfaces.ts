@@ -22,6 +22,7 @@ add = ( n1:number, n2:number ) => {
   return n1 + n2;
 }
 
+/*
 class Person implements Greetable {
   name?: string;
 
@@ -44,4 +45,4 @@ let user1: Greetable;
 user1 = new Person('Max');
 
 user1.greet("Hello");
-
+*/
